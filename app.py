@@ -38,7 +38,7 @@ if archivo_las is not None:
 opciones_inicio=st.sidebar.radio("Seleccione una opción",["Inicio","Información de Data","Análisis de Data","Visualización de Data"])
 if opciones_inicio=="Inicio":
 	with st.expander("Instrucciones"):
-		st.write("Cargue el archivo LAS a analizar ")
+		st.write("Cargue el archivo LAS a analizar en el menu desplegable ")
 		st.write("Dirijase a **Análisis de Data** para obtener estadísticas de las curvas. ")
 		st.write("Dirijase a **Visualización de de Data**, seleccione las curvas a graficar con sus respectivos colores.")
 		st.write("Seleccionar los límites de la capa a graficar.")
@@ -94,33 +94,37 @@ if opciones_inicio=="Análisis de Data":
 
 	with st.expander("Estadisticas"):
 		filtro=st.multiselect("Seleccione curvas a filtrar",seleccion_columnas)
-		df_filtrado=df[filtro]
-		st.write(df_filtrado)
-		df_estadisticas =df_filtrado.describe()
-		st.write(df_estadisticas)
+	
+		if bool(filtro) == True:
+			df_filtrado=df[filtro]
+			st.write(df_filtrado)
+			df_estadisticas =df_filtrado.describe()
+			st.write(df_estadisticas)
 
 	with st.expander("Información del Registro"):
 		column1,column2=st.columns(2)
-		with column1:
-			prof_max=df.index[-1]
-			prof_min=df.index[0]
-			ingreso_numero1=st.number_input("Ingrese límite superior de Capa 1",min_value=prof_min,max_value=prof_max,value=prof_min)
-			ingreso_numero2=st.number_input("Ingrese límite inferior de Capa 1",min_value=prof_min,max_value=prof_max,value=prof_max)
-			st.write(df_filtrado[ingreso_numero1:ingreso_numero2])
-		with column2:
-			prof_max=df.index[-1]
-			prof_min=df.index[0]
-			ingreso_numero3=st.number_input("Ingrese límite superior de Capa 2",min_value=prof_min,max_value=prof_max,value=prof_min)
-			ingreso_numero4=st.number_input("Ingrese límite inferior de Capa 2",min_value=prof_min,max_value=prof_max,value=prof_max)	
-			st.write(df_filtrado[ingreso_numero3:ingreso_numero4])
+		if bool(filtro)==True:
+			with column1:
+				prof_max=df.index[-1]
+				prof_min=df.index[0]
+				ingreso_numero1=st.number_input("Ingrese límite superior de Capa 1",min_value=prof_min,max_value=prof_max,value=prof_min)
+				ingreso_numero2=st.number_input("Ingrese límite inferior de Capa 1",min_value=prof_min,max_value=prof_max,value=prof_max)
+				st.write(df_filtrado[ingreso_numero1:ingreso_numero2])
+			with column2:
+				prof_max=df.index[-1]
+				prof_min=df.index[0]
+				ingreso_numero3=st.number_input("Ingrese límite superior de Capa 2",min_value=prof_min,max_value=prof_max,value=prof_min)
+				ingreso_numero4=st.number_input("Ingrese límite inferior de Capa 2",min_value=prof_min,max_value=prof_max,value=prof_max)	
+				st.write(df_filtrado[ingreso_numero3:ingreso_numero4])
 
 if opciones_inicio=="Visualización de Data":
 	st.write("Visualización de Data")
-	filtro=st.multiselect("Seleccione curvas a filtrar",seleccion_columnas)
+	filtro=seleccion_columnas
+	filtro=st.multiselect("Seleccione al menos 2 curvas a filtrar",seleccion_columnas)
 	df_filtrado=df[filtro]
 	colores=["Black","Grey","Blue","Cyan","Red","Green","Yellow","Magenta","Pink","Violet","Orange","Brown","Beige","Gold"]
 	colors=st.multiselect("Seleccione color de las curvas en orden correspondiente",colores)
-	
+	st.write(len(filtro))
 	#df_filtrado=df_filtrado.dropna(subset=filtro,axis=0,how="any")
 
 
@@ -136,7 +140,7 @@ if opciones_inicio=="Visualización de Data":
 	selfiltro=st.selectbox("Desea Filtrar valores nulos de las curvas selccionadas?",["Si","No"])
 
 	df_filtrado2=df_filtrado[ingreso_numero1:ingreso_numero2]
-	st.write("Data Frame con valores nulos filtrados")
+	st.write("Data Frame")
 
 
 	if selfiltro=="Si":
@@ -145,8 +149,7 @@ if opciones_inicio=="Visualización de Data":
 
 
 	
-	
-	#df_filtrado2=df_filtrado2.dropna(subset=filtro,axis=0,how="any")
+
 	st.write(df_filtrado2)
 	curvas=len(filtro)
 	df_filtrado2["Depth"]=df_filtrado2.index
@@ -159,37 +162,37 @@ if opciones_inicio=="Visualización de Data":
 		ingreso_numero1=ingreso_numero1 - ingreso_numero1%10
 
 
-		
+	if len(filtro)>1:	
 
 
-	f,ax=plt.subplots(nrows=1,ncols=curvas,figsize=(10,(ingreso_numero2-ingreso_numero1)/5))
-	major_ticks = np.arange(ingreso_numero1, ingreso_numero2, 5)
-	minor_ticks = np.arange(ingreso_numero1, ingreso_numero2, 1)
-	for i,log,color in zip(range(curvas),filtro,colors):
-		ax[i].plot(df_filtrado2[log],df_filtrado2["Depth"],color=color)
-		ax[i].invert_yaxis()
+		f,ax=plt.subplots(nrows=1,ncols=curvas,figsize=(10,(ingreso_numero2-ingreso_numero1)/5))
+		major_ticks = np.arange(ingreso_numero1, ingreso_numero2, 5)
+		minor_ticks = np.arange(ingreso_numero1, ingreso_numero2, 1)
+		for i,log,color in zip(range(curvas),filtro,colors):
+			ax[i].plot(df_filtrado2[log],df_filtrado2["Depth"],color=color)
+			ax[i].invert_yaxis()
 
-		ax[i].xaxis.set_label_position('top')
-		ax[i].set_xlabel(filtro[i])
+			ax[i].xaxis.set_label_position('top')
+			ax[i].set_xlabel(filtro[i])
 
 
 		# Major ticks every 20, minor ticks every 5
 
 
-		ax[i].set_yticks(major_ticks)
-		ax[i].set_yticks(minor_ticks, minor=True)
+			ax[i].set_yticks(major_ticks)
+			ax[i].set_yticks(minor_ticks, minor=True)
 
 
-		ax[i].grid(which='major', alpha=0.5)
-		ax[i].grid(which='minor', alpha=0.2)
-		ax[i].tick_params(axis='y',labelright=False,labelleft=False)
+			ax[i].grid(which='major', alpha=0.5)
+			ax[i].grid(which='minor', alpha=0.2)
+			ax[i].tick_params(axis='y',labelright=False,labelleft=False)
 
 
 
-	ax[0].set_ylabel("Profundidad")
-	ax[0].tick_params(axis='y',labelleft=True)
-	ax[-1].tick_params(axis='y',labelright=True)
-	st.pyplot(f)
+		ax[0].set_ylabel("Profundidad")
+		ax[0].tick_params(axis='y',labelleft=True)
+		ax[-1].tick_params(axis='y',labelright=True)
+		st.pyplot(f)
 
 
 
