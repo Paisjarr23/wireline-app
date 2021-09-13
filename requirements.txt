@@ -3,4 +3,4 @@ lasio>=0.29
 streamlit
 matplotlib
 numpy
-io
+stringIO
