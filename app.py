@@ -19,14 +19,15 @@ if archivo_las is not None:
 	str_io = io.StringIO(bytes_data.decode('Windows-1252'))
 	las_file = lasio.read(str_io)
 	df = las_file.df()
+	seleccion_columnas=df.columns
+	cant_log=len(seleccion_columnas)
+	prof_max=df.index[-1]
+	prof_min=df.index[0]
 
 
 
 
-seleccion_columnas=df.columns
-cant_log=len(seleccion_columnas)
-prof_max=df.index[-1]
-prof_min=df.index[0]
+
 #archivo_cargado = st.sidebar.file_uploader("Cargar archivo LAS" , type=['.las', '.LAS'], key=None)
 
 
