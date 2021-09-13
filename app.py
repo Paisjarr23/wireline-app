@@ -10,7 +10,7 @@ st.title("Well Logging Tool")
 st.sidebar.title("Menu")
 #archivo_las=lasio.read("LGAE-040.las")
 #df=archivo_las.df()
-archivo_las = st.file_uploader("Cargar archivo LAS" , key=None)
+archivo_las = st.sidebar.file_uploader("Cargar archivo LAS" , key=None)
         
 if archivo_las is None:
 	st.write("Suba un archivo con extensión .las")
@@ -37,10 +37,12 @@ prof_min=df.index[0]
 opciones_inicio=st.sidebar.radio("Seleccione una opción",["Inicio","Información de Data","Análisis de Data","Visualización de Data"])
 if opciones_inicio=="Inicio":
 	with st.expander("Instrucciones"):
-		st.write("Cargue el archivo LAS a analizar en el menu desplegable.")
+		st.write("Cargue el archivo LAS a analizar ")
 		st.write("Dirijase a **Análisis de Data** para obtener estadísticas de las curvas. ")
 		st.write("Dirijase a **Visualización de de Data**, seleccione las curvas a graficar con sus respectivos colores.")
 		st.write("Seleccionar los límites de la capa a graficar.")
+
+
 	with st.expander("Descripción"):
 		st.write("**Información de Data** ")
 		st.write("DataFrame extraído del archivo LAS.")
